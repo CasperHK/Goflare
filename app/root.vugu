@@ -1,5 +1,1250 @@
-<div>
-  <h1>Welcome to Gortex</h1>
-  <p>The Intelligent Neural Cortex for Pure Go Full-Stack Development.</p>
-  <p>100% Pure Go • Zero JavaScript • Powered by Gin & Vugu</p>
+<div class="page-shell">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+    :root {
+      --canvas: #f3ede2;
+      --canvas-deep: #e7ddcf;
+      --panel: rgba(255, 250, 242, 0.9);
+      --ink: #182230;
+      --muted: #596576;
+      --line: rgba(24, 34, 48, 0.1);
+      --accent: #c95d33;
+      --accent-soft: rgba(201, 93, 51, 0.14);
+      --accent-strong: #9d431f;
+      --night: #15202c;
+      --night-soft: #223344;
+      --shadow: 0 22px 60px rgba(42, 37, 29, 0.12);
+      --sidebar-width: 280px;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      scroll-behavior: smooth;
+      scroll-padding-top: 132px;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Instrument Sans", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.72), transparent 32%),
+        radial-gradient(circle at right 12%, rgba(201, 93, 51, 0.12), transparent 28%),
+        linear-gradient(180deg, var(--canvas) 0%, var(--canvas-deep) 100%);
+    }
+
+    #vugu_mount_point {
+      min-height: 100vh;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app-shell {
+      min-height: calc(100vh - 48px);
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      padding: 28px 22px;
+      border-radius: 30px;
+      color: #f9f4ea;
+      background:
+        linear-gradient(180deg, rgba(18, 29, 40, 0.98) 0%, rgba(17, 24, 35, 0.94) 100%);
+      box-shadow: 0 24px 70px rgba(20, 26, 34, 0.22);
+    }
+
+    .sidebar::before,
+    .sidebar::after,
+    .hero-panel::before,
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .sidebar,
+    .hero-panel,
+    .topbar,
+    .panel,
+    .mini-card,
+    .workspace-card,
+    .search-shell,
+    .metric-tile,
+    .stat-chip,
+    .progress-track,
+    .signal-card {
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar::before {
+      width: 240px;
+      height: 240px;
+      right: -120px;
+      top: -48px;
+      background: radial-gradient(circle, rgba(201, 93, 51, 0.36), transparent 68%);
+    }
+
+    .sidebar::after {
+      width: 180px;
+      height: 180px;
+      left: -90px;
+      bottom: 42px;
+      background: radial-gradient(circle, rgba(111, 181, 144, 0.18), transparent 72%);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      color: #fff6ee;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, #ea7c4e 0%, #c95d33 100%);
+      box-shadow: 0 12px 28px rgba(201, 93, 51, 0.28);
+    }
+
+    .brand-text p,
+    .title-block p,
+    .panel-kicker,
+    .mini-kicker,
+    .menu-label span,
+    .stat-chip span,
+    .workspace-card p,
+    .timeline-time,
+    .status-pill,
+    .queue-badge,
+    .section-chip {
+      margin: 0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .brand-text p,
+    .workspace-card p,
+    .menu-label span,
+    .signal-copy p {
+      color: rgba(249, 244, 234, 0.62);
+    }
+
+    .brand-text h2,
+    .title-block h1,
+    .hero-copy h2,
+    .panel-header h3,
+    .mini-card h4 {
+      margin: 0;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-text h2 {
+      font-size: 24px;
+      color: #f9f4ea;
+    }
+
+    .sidebar-copy {
+      margin: 0 0 24px;
+      color: rgba(249, 244, 234, 0.76);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .menu-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    .menu-heading {
+      margin: 0 0 2px;
+      color: rgba(249, 244, 234, 0.48);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid transparent;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.02);
+      text-decoration: none;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .menu-item:hover,
+    .menu-item:focus-visible {
+      transform: translateX(4px);
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .menu-token {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      color: #fff4ec;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      flex: 0 0 auto;
+      transition: background 180ms ease;
+    }
+
+    .menu-label {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .menu-label strong {
+      display: block;
+      font-size: 15px;
+      color: #f9f4ea;
+      font-weight: 600;
+    }
+
+    .menu-item.menu-default,
+    .page-shell:has(#overview:target) .menu-item[href="#overview"],
+    .page-shell:has(#releases:target) .menu-item[href="#releases"],
+    .page-shell:has(#model-queue:target) .menu-item[href="#model-queue"],
+    .page-shell:has(#design-system:target) .menu-item[href="#design-system"],
+    .page-shell:has(#analytics:target) .menu-item[href="#analytics"] {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(201, 93, 51, 0.16));
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .page-shell:has(.section-target:target) .menu-item.menu-default {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .menu-item.menu-default .menu-token,
+    .page-shell:has(#overview:target) .menu-item[href="#overview"] .menu-token,
+    .page-shell:has(#releases:target) .menu-item[href="#releases"] .menu-token,
+    .page-shell:has(#model-queue:target) .menu-item[href="#model-queue"] .menu-token,
+    .page-shell:has(#design-system:target) .menu-item[href="#design-system"] .menu-token,
+    .page-shell:has(#analytics:target) .menu-item[href="#analytics"] .menu-token {
+      background: linear-gradient(135deg, #ea7c4e 0%, #c95d33 100%);
+    }
+
+    .signal-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .signal-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .signal-copy strong {
+      display: block;
+      font-size: 15px;
+      color: #f9f4ea;
+      font-weight: 600;
+    }
+
+    .signal-copy p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .status-pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(111, 181, 144, 0.14);
+      color: #b7efc5;
+      white-space: nowrap;
+    }
+
+    .workspace-card {
+      margin-top: 26px;
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .workspace-card strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .workspace-card .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      background: linear-gradient(180deg, rgba(255, 250, 242, 0.92), rgba(255, 248, 239, 0.78));
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      z-index: 3;
+    }
+
+    .title-block p,
+    .panel-kicker,
+    .mini-kicker,
+    .stat-chip span,
+    .timeline-time,
+    .queue-badge,
+    .section-chip {
+      color: var(--accent-strong);
+    }
+
+    .title-block h1 {
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-shell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 280px;
+      padding: 0 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .search-shell span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .search-shell input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--ink);
+      padding: 14px 0;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .ghost-button,
+    .solid-button,
+    .hero-button {
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 16px;
+      padding: 14px 18px;
+      text-decoration: none;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .ghost-button {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(24, 34, 48, 0.08);
+    }
+
+    .solid-button,
+    .hero-button.primary {
+      color: #fff9f3;
+      background: linear-gradient(135deg, #d16a3d 0%, #b44d27 100%);
+      box-shadow: 0 14px 30px rgba(180, 77, 39, 0.22);
+    }
+
+    .hero-button.secondary {
+      color: #fff9f3;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.86fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .main-stack,
+    .side-stack {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .section-target {
+      scroll-margin-top: 132px;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .section-target:target {
+      transform: translateY(-2px);
+      border-color: rgba(201, 93, 51, 0.28);
+      box-shadow: 0 0 0 3px rgba(201, 93, 51, 0.12), var(--shadow);
+    }
+
+    .hero-panel {
+      overflow: hidden;
+      min-height: 320px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) 240px;
+      gap: 18px;
+      padding: 28px;
+      border-radius: 32px;
+      color: #fff9f2;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.14), transparent 22%),
+        linear-gradient(135deg, #132131 0%, #1d3548 58%, #ca6034 140%);
+      box-shadow: 0 30px 70px rgba(21, 32, 44, 0.22);
+    }
+
+    .hero-panel::before {
+      width: 280px;
+      height: 280px;
+      right: -80px;
+      top: -70px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 64%);
+    }
+
+    .hero-panel::after {
+      width: 220px;
+      height: 220px;
+      left: -60px;
+      bottom: -120px;
+      background: radial-gradient(circle, rgba(111, 181, 144, 0.18), transparent 70%);
+    }
+
+    .hero-copy,
+    .hero-metrics {
+      z-index: 1;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .section-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff2ea;
+    }
+
+    .section-chip::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffd7c6;
+      box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-copy h2 {
+      font-size: 44px;
+      line-height: 0.95;
+      max-width: 10ch;
+    }
+
+    .hero-copy p {
+      max-width: 52ch;
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(255, 249, 242, 0.78);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-metrics {
+      align-self: end;
+      display: grid;
+      gap: 12px;
+    }
+
+    .metric-tile {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(16px);
+    }
+
+    .metric-tile strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 28px;
+      font-weight: 700;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+    }
+
+    .metric-tile span {
+      color: rgba(255, 249, 242, 0.7);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .panel,
+    .mini-card {
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: linear-gradient(180deg, var(--panel) 0%, rgba(255, 248, 238, 0.96) 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .mini-card {
+      padding: 22px;
+    }
+
+    .panel-header,
+    .mini-header,
+    .timeline-item,
+    .queue-row,
+    .feed-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .panel-header h3,
+    .mini-card h4 {
+      font-size: 24px;
+      line-height: 1.05;
+    }
+
+    .panel-copy,
+    .mini-copy,
+    .queue-row p,
+    .feed-row p,
+    .timeline-body p,
+    .system-copy,
+    .analytics-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .panel-subgrid,
+    .section-split,
+    .release-snapshot,
+    .analytics-strip {
+      display: grid;
+      gap: 12px;
+    }
+
+    .release-snapshot {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .stat-chip {
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(24, 34, 48, 0.06);
+    }
+
+    .stat-chip strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 26px;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      line-height: 1;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .timeline-item {
+      align-items: flex-start;
+      padding-top: 14px;
+      border-top: 1px solid rgba(24, 34, 48, 0.08);
+    }
+
+    .timeline-item:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .timeline-time {
+      min-width: 72px;
+      padding-top: 4px;
+    }
+
+    .timeline-body strong,
+    .queue-row strong,
+    .feed-row strong {
+      display: block;
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(24, 34, 48, 0.06);
+    }
+
+    .check-token {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .check-item strong {
+      display: block;
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .check-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .section-split {
+      grid-template-columns: 1.1fr 0.9fr;
+      margin-top: 6px;
+    }
+
+    .note-card,
+    .focus-well {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(24, 34, 48, 0.06);
+    }
+
+    .note-card strong,
+    .focus-well strong,
+    .analytics-callout strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .focus-well ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .queue-list,
+    .feed-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .queue-row,
+    .feed-row {
+      align-items: flex-start;
+    }
+
+    .queue-badge,
+    .score-pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(201, 93, 51, 0.12);
+      white-space: nowrap;
+    }
+
+    .score-pill {
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .analytics-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .analytics-card {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(24, 34, 48, 0.06);
+    }
+
+    .analytics-card strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+    }
+
+    .analytics-callout {
+      padding: 18px;
+      border-radius: 24px;
+      margin-top: 18px;
+      color: #fdf9f3;
+      background: linear-gradient(135deg, var(--night) 0%, var(--night-soft) 100%);
+      box-shadow: 0 16px 34px rgba(21, 32, 44, 0.18);
+    }
+
+    .analytics-callout p {
+      margin: 0;
+      color: rgba(253, 249, 243, 0.76);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f5af89 0%, #e27b4d 100%);
+    }
+
+    @media (max-width: 1180px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-metrics,
+      .release-snapshot,
+      .analytics-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .section-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .page-shell {
+        padding: 16px;
+      }
+
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar,
+      .topbar {
+        position: relative;
+        top: 0;
+        max-height: none;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .topbar-actions {
+        justify-content: stretch;
+      }
+
+      .search-shell {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .title-block h1 {
+        font-size: 28px;
+      }
+
+      .hero-copy h2 {
+        font-size: 34px;
+      }
+
+      .release-snapshot,
+      .analytics-strip,
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item,
+      .queue-row,
+      .feed-row,
+      .workspace-card .status-row,
+      .signal-card {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark">GF</div>
+        <div class="brand-text">
+          <p>Goflare Studio</p>
+          <h2>Control Room</h2>
+        </div>
+      </div>
+
+      <p class="sidebar-copy">
+        The left rail now jumps to real sections in the workspace instead of acting like decorative chrome.
+      </p>
+
+      <nav class="menu-group" aria-label="Section navigation">
+        <p class="menu-heading">Sections</p>
+
+        <a class="menu-item menu-default" href="#overview">
+          <div class="menu-token">OV</div>
+          <div class="menu-label">
+            <strong>Overview</strong>
+            <span>Hero, status, and launch frame</span>
+          </div>
+        </a>
+
+        <a class="menu-item" href="#releases">
+          <div class="menu-token">RL</div>
+          <div class="menu-label">
+            <strong>Releases</strong>
+            <span>Ship windows and checklist</span>
+          </div>
+        </a>
+
+        <a class="menu-item" href="#model-queue">
+          <div class="menu-token">MQ</div>
+          <div class="menu-label">
+            <strong>Model Queue</strong>
+            <span>Inference and validation lanes</span>
+          </div>
+        </a>
+
+        <a class="menu-item" href="#design-system">
+          <div class="menu-token">DS</div>
+          <div class="menu-label">
+            <strong>Design System</strong>
+            <span>Principles and layout rationale</span>
+          </div>
+        </a>
+
+        <a class="menu-item" href="#analytics">
+          <div class="menu-token">AN</div>
+          <div class="menu-label">
+            <strong>Analytics</strong>
+            <span>Signal feed and trend cards</span>
+          </div>
+        </a>
+      </nav>
+
+      <div class="signal-grid">
+        <div class="signal-card">
+          <div class="signal-copy">
+            <strong>WASM build lane</strong>
+            <p>Fresh artifact available after the last UI pass.</p>
+          </div>
+          <span class="status-pill">Ready</span>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-copy">
+            <strong>API heartbeat</strong>
+            <p>Routing and static asset checks remain stable.</p>
+          </div>
+          <span class="status-pill">Healthy</span>
+        </div>
+      </div>
+
+      <div class="workspace-card">
+        <p>Current workspace</p>
+        <strong>Goflare Platform Sprint</strong>
+        <div class="status-row">
+          <span class="status-pill">Section links active</span>
+          <span>06 Jun</span>
+        </div>
+      </div>
+    </aside>
+
+    <header class="topbar">
+      <div class="title-block">
+        <p>Operations Overview</p>
+        <h1>L-shape workspace with linked sections</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <label class="search-shell">
+          <span>Search</span>
+          <input type="search" placeholder="Boards, deploys, notes"/>
+        </label>
+        <a class="ghost-button" href="#releases">Jump to releases</a>
+        <a class="solid-button" href="#analytics">Open analytics</a>
+      </div>
+    </header>
+
+    <main class="content-grid">
+      <div class="main-stack">
+        <section class="hero-panel section-target" id="overview">
+          <div class="hero-copy">
+            <div>
+              <span class="section-chip">Overview</span>
+              <h2>Keep product, platform, and design in one frame.</h2>
+            </div>
+
+            <p>
+              This shell now treats the side menu as a real in-page navigator. Each item scrolls to a concrete section with its own identity, and the targeted panel gets a visual focus state.
+            </p>
+
+            <div class="hero-actions">
+              <a class="hero-button primary" href="#releases">Review Releases</a>
+              <a class="hero-button secondary" href="#model-queue">Inspect Queue</a>
+            </div>
+          </div>
+
+          <div class="hero-metrics">
+            <div class="metric-tile">
+              <span>Deployment Rhythm</span>
+              <strong>14</strong>
+              <span>Active windows this week</span>
+            </div>
+            <div class="metric-tile">
+              <span>Section Links</span>
+              <strong>5</strong>
+              <span>Anchored dashboard destinations</span>
+            </div>
+            <div class="metric-tile">
+              <span>Latency Budget</span>
+              <strong>118ms</strong>
+              <span>Current median response</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section-target" id="releases">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Releases</p>
+              <h3>Release tempo and launch checklist</h3>
+            </div>
+            <span class="score-pill">Shipping</span>
+          </div>
+
+          <p class="panel-copy">
+            The release section brings the shipping snapshot and the next actions into one place, so the menu link lands on something actionable rather than a generic card.
+          </p>
+
+          <div class="release-snapshot">
+            <div class="stat-chip">
+              <span>Ready to ship</span>
+              <strong>18</strong>
+            </div>
+            <div class="stat-chip">
+              <span>Open reviews</span>
+              <strong>07</strong>
+            </div>
+            <div class="stat-chip">
+              <span>Risk flags</span>
+              <strong>03</strong>
+            </div>
+          </div>
+
+          <div class="panel-subgrid">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-time">08:30</div>
+                <div class="timeline-body">
+                  <strong>Design review cleared the dashboard refresh</strong>
+                  <p>Spacing, color ratios, and responsive layout all passed the final pass.</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">11:10</div>
+                <div class="timeline-body">
+                  <strong>API slice moved to staging</strong>
+                  <p>Health checks stayed green after the updated serving path for the Vugu surface.</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">15:40</div>
+                <div class="timeline-body">
+                  <strong>Usability notes queued for tomorrow</strong>
+                  <p>Navigation grouping and top-bar search are ready for another iteration.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="checklist">
+              <div class="check-item">
+                <div class="check-token">01</div>
+                <div>
+                  <strong>Polish mobile menu behavior</strong>
+                  <p>Collapse navigation groups into a denser stack below tablet width.</p>
+                </div>
+              </div>
+              <div class="check-item">
+                <div class="check-token">02</div>
+                <div>
+                  <strong>Wire top-bar search to live filters</strong>
+                  <p>Turn the static search surface into an app-level query input.</p>
+                </div>
+              </div>
+              <div class="check-item">
+                <div class="check-token">03</div>
+                <div>
+                  <strong>Finalize the next launch window</strong>
+                  <p>Confirm owner, timing, and post-ship smoke test sequence.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section-target" id="design-system">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Design System</p>
+              <h3>Why this dashboard shell feels intentional</h3>
+            </div>
+            <span class="score-pill">Guided</span>
+          </div>
+
+          <div class="section-split">
+            <div class="note-card">
+              <strong>Stable frame</strong>
+              <p class="system-copy">
+                The sidebar anchors navigation and identity, while the top bar stays flexible for search, quick actions, and page context. The result feels like a real application shell instead of a plain landing page.
+              </p>
+            </div>
+
+            <div class="focus-well">
+              <strong>Design principles</strong>
+              <ul>
+                <li>Warm editorial palette with dark contrast rail.</li>
+                <li>Rounded glass panels over a textured canvas.</li>
+                <li>Section-level anchors instead of decorative menu rows.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="side-stack">
+        <section class="mini-card section-target" id="model-queue">
+          <div class="mini-header">
+            <div>
+              <p class="mini-kicker">Model Queue</p>
+              <h4>Inference lane snapshot</h4>
+            </div>
+            <span class="score-pill">3 live</span>
+          </div>
+
+          <p class="mini-copy">
+            The model queue is now its own scroll target, so the sidebar jump lands exactly on the lane summary.
+          </p>
+
+          <div class="queue-list">
+            <div class="queue-row">
+              <div>
+                <strong>Vision classifier retrain</strong>
+                <p>New validation run started after the serving path update.</p>
+              </div>
+              <span class="queue-badge">GPU 02</span>
+            </div>
+            <div class="queue-row">
+              <div>
+                <strong>Layout regression capture</strong>
+                <p>Collecting desktop and mobile screenshots for the current shell.</p>
+              </div>
+              <span class="queue-badge">UI Lab</span>
+            </div>
+            <div class="queue-row">
+              <div>
+                <strong>Telemetry sampler</strong>
+                <p>Watching request timings while the WASM asset compiles on demand.</p>
+              </div>
+              <span class="queue-badge">API</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="mini-card section-target" id="analytics">
+          <div class="mini-header">
+            <div>
+              <p class="mini-kicker">Analytics</p>
+              <h4>Activity feed and trend lens</h4>
+            </div>
+            <span class="score-pill">Now</span>
+          </div>
+
+          <p class="analytics-copy">
+            Analytics gets a dedicated target too, pairing live-ish feed entries with compact trend cards so the menu destination feels meaningful.
+          </p>
+
+          <div class="analytics-strip">
+            <div class="analytics-card">
+              <span class="mini-kicker">Median latency</span>
+              <strong>118ms</strong>
+            </div>
+            <div class="analytics-card">
+              <span class="mini-kicker">Refresh loop</span>
+              <strong>6m</strong>
+            </div>
+          </div>
+
+          <div class="feed-list">
+            <div class="feed-row">
+              <div>
+                <strong>Top bar utilities refreshed</strong>
+                <p>Search, call-to-action links, and page title now sit in a floating glass header.</p>
+              </div>
+            </div>
+            <div class="feed-row">
+              <div>
+                <strong>Navigation rail is now functional</strong>
+                <p>Each side-menu item targets a real dashboard section and receives a highlight when selected.</p>
+              </div>
+            </div>
+            <div class="feed-row">
+              <div>
+                <strong>Panels react to navigation</strong>
+                <p>Targeted sections get a focus ring so scroll jumps feel anchored and intentional.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-callout">
+            <strong>Interface polish score</strong>
+            <p>The shell is now structured around named sections, which makes future routing and data binding much easier.</p>
+            <div class="progress-track"><div class="progress-fill" style="width: 88%;"></div></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
 </div>
